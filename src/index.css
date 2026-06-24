@@ -1,0 +1,194 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap');
+@import "tailwindcss";
+
+body {
+  background-color: #0a0a0f;
+  color: #f3f4f6;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(0, 128, 255, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(170, 0, 255, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(0, 230, 230, 0.1) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(0, 128, 255, 0.05) 0px, transparent 50%);
+}
+
+* {
+  scroll-behavior: smooth;
+}
+
+/* Glass Card - Dark theme */
+.card {
+  background-color: rgba(26, 26, 46, 0.4);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(24px);
+  box-shadow: 0 8px 32px 0 rgba(0, 128, 255, 0.1);
+  transition: all 0.3s;
+}
+
+.card:hover {
+  box-shadow: 0 8px 32px 0 rgba(0, 128, 255, 0.2);
+  border-color: rgba(0, 128, 255, 0.3);
+}
+
+.glass-card {
+  background-color: rgba(26, 26, 46, 0.3);
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(32px);
+  box-shadow: 0 8px 32px 0 rgba(170, 0, 255, 0.15);
+}
+
+/* Buttons - Electric Blue & Neon Purple */
+.btn-primary {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(to right, #0080ff, #aa00ff);
+  box-shadow: 0 0 20px rgba(0, 128, 255, 0.3);
+  transition: all 0.3s;
+  transform: translateY(0);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(to right, #0066cc, #8800cc);
+  box-shadow: 0 0 30px rgba(170, 0, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.btn-primary:active {
+  transform: scale(0.95);
+}
+
+.btn-secondary {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  color: #1a94ff;
+  background-color: rgba(26, 26, 46, 0.5);
+  border: 2px solid rgba(0, 128, 255, 0.3);
+  transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+  border-color: #0080ff;
+  background-color: rgba(0, 128, 255, 0.1);
+  box-shadow: 0 0 20px rgba(0, 128, 255, 0.2);
+}
+
+.btn-neon {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(to right, #aa00ff, #00e6e6);
+  box-shadow: 0 0 20px rgba(170, 0, 255, 0.3);
+  transition: all 0.3s;
+  transform: translateY(0);
+}
+
+.btn-neon:hover {
+  background: linear-gradient(to right, #8800cc, #00b3b3);
+  box-shadow: 0 0 30px rgba(0, 230, 230, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Input Fields - Dark theme */
+.input-field {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background-color: rgba(26, 26, 46, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  color: #f3f4f6;
+  transition: all 0.2s;
+  outline: none;
+}
+
+.input-field::placeholder {
+  color: #6b7280;
+}
+
+.input-field:focus {
+  border-color: #0080ff;
+  background-color: rgba(26, 26, 46, 0.7);
+  box-shadow: 0 0 20px rgba(0, 128, 255, 0.2);
+}
+
+/* Glow effects */
+.glow-electric {
+  box-shadow: 0 0 15px rgba(0, 128, 255, 0.4);
+}
+
+.glow-neon {
+  box-shadow: 0 0 15px rgba(170, 0, 255, 0.4);
+}
+
+.glow-cyber {
+  box-shadow: 0 0 15px rgba(0, 230, 230, 0.4);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(26, 26, 46, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #0080ff, #aa00ff);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(to bottom, #1a94ff, #b91aff);
+}
+
+/* Animaciones */
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.5s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
