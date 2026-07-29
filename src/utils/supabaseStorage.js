@@ -379,3 +379,94 @@ export const saveJovenes = async (personas) => {
 
 export const getAttendanceRecords = (categoria) => getAsistencias(categoria)
 export const getAttendanceStats = getEstadisticas
+
+// ============================================
+// FUNCIONES PARA REPORTES Y ANÁLISIS
+// ============================================
+
+/**
+ * Obtener estadísticas detalladas por persona
+ * @param {string} categoria - 'miembros' | 'lideres' | 'jovenes'
+ * @param {string} personaId - UUID de la persona
+ */
+export const getPersonAttendanceStats = async (categoria, personaId) => {
+  try {
+    const { data, error } = await supabase
+      .from('asistencias')
+      .select('*')
+      .eq('persona_id', personaId)
+      .eq('categoria', categoria)
+      .order('fecha', { ascending: false })
+    
+    if (error) throw error
+    
+    const asistencias = data || []
+    
+    let totalPresente = 0
+    let totalAusente = 0
+    let totalJustificado = 0
+    const totalEventos = asistencias.length
+    const historial = []
+    
+    asistencias.forEach((registro) => {
+      historial.push({
+        fecha: registro.fecha,
+        estado: registro.estado,
+        tipo: registro.tipo_evento || 'N/A',
+      })
+      
+      if (registro.estado === 'presente') totalPresente++
+      else if (registro.estado === 'ausente') totalAusente++
+      else if (registro.estado === 'justificado') totalJustificado++
+    })
+    
+    const porcentajeAsistencia = totalEventos > 0 ? Math.round((totalPresente / totalEventos) * 100) : 0
+    
+    return {
+      totalPresente,
+      totalAusente,
+      totalJustificado,
+      totalEventos,
+      porcentajeAsistencia,
+      historial,
+    }
+  } catch (error) {
+    console.error('Error al obtener estadísticas de persona:', error)
+    return {
+      totalPresente: 0,
+      totalAusente: 0,
+      totalJustificado: 0,
+      totalEventos: 0,
+      porcentajeAsistencia: 0,
+      historial: [],
+    }
+  }
+}
+
+/**
+ * Obtener reporte completo de un módulo con estadísticas de todas las personas
+ * @param {string} categoria - 'miembros' | 'lideres' | 'jovenes'
+ */
+export const getModuleReport = async (categoria) => {
+  try {
+    // Obtener todas las personas de la categoría
+    const personas = await getPersonas(categoria)
+    
+    // Obtener estadísticas para cada persona
+    const reportPromises = personas.map(async (persona) => {
+      const stats = await getPersonAttendanceStats(categoria, persona.id)
+      return {
+        ...persona,
+        ...stats,
+      }
+    })
+    
+    const report = await Promise.all(reportPromises)
+    
+    // Ordenar por porcentaje de asistencia (descendente)
+    return report.sort((a, b) => b.porcentajeAsistencia - a.porcentajeAsistencia)
+  } catch (error) {
+    console.error('Error al obtener reporte del módulo:', error)
+    return []
+  }
+}

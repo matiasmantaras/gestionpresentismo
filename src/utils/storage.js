@@ -168,3 +168,66 @@ export const importAllData = (data) => {
     })
   }
 }
+
+// ============================================
+// FUNCIONES PARA REPORTES Y ANÁLISIS
+// ============================================
+
+// Obtener estadísticas detalladas por persona
+export const getPersonAttendanceStats = (category, personId) => {
+  const records = getAttendanceRecords(category)
+  
+  let totalPresente = 0
+  let totalAusente = 0
+  let totalJustificado = 0
+  let totalEventos = 0
+  const historial = []
+  
+  records.forEach((record) => {
+    if (record.registros && Array.isArray(record.registros)) {
+      const personRecord = record.registros.find((r) => r.id === personId)
+      if (personRecord) {
+        totalEventos++
+        historial.push({
+          fecha: record.fecha,
+          estado: personRecord.estado,
+          tipo: record.tipo || 'N/A',
+        })
+        
+        if (personRecord.estado === 'presente') totalPresente++
+        else if (personRecord.estado === 'ausente') totalAusente++
+        else if (personRecord.estado === 'justificado') totalJustificado++
+      }
+    }
+  })
+  
+  const porcentajeAsistencia = totalEventos > 0 ? Math.round((totalPresente / totalEventos) * 100) : 0
+  
+  return {
+    totalPresente,
+    totalAusente,
+    totalJustificado,
+    totalEventos,
+    porcentajeAsistencia,
+    historial: historial.sort((a, b) => new Date(b.fecha) - new Date(a.fecha)),
+  }
+}
+
+// Obtener reporte completo de un módulo
+export const getModuleReport = (category) => {
+  let people = []
+  if (category === 'miembros') people = getMiembros()
+  else if (category === 'lideres') people = getLideres()
+  else if (category === 'jovenes') people = getJovenes()
+  
+  const report = people.map((person) => {
+    const stats = getPersonAttendanceStats(category, person.id)
+    return {
+      ...person,
+      ...stats,
+    }
+  })
+  
+  // Ordenar por porcentaje de asistencia (descendente)
+  return report.sort((a, b) => b.porcentajeAsistencia - a.porcentajeAsistencia)
+}

@@ -5,6 +5,7 @@ import Dashboard from './components/pages/Dashboard'
 import MiembrosGenerales from './components/pages/MiembrosGenerales'
 import LideresMinisterio from './components/pages/LideresMinisterio'
 import GrupoJovenes from './components/pages/GrupoJovenes'
+import Reportes from './components/pages/Reportes'
 import TestSupabase from './components/pages/TestSupabase'
 
 function App() {
@@ -21,6 +22,8 @@ function App() {
         return <LideresMinisterio />
       case 'jovenes':
         return <GrupoJovenes />
+      case 'reportes':
+        return <Reportes />
       case 'test-supabase':
         return <TestSupabase />
       default:
