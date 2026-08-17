@@ -1,4 +1,21 @@
-export default function Header({ onMenuClick }) {
+import { useState } from 'react'
+
+export default function Header({ onMenuClick, user, onLogout }) {
+  const [showUserMenu, setShowUserMenu] = useState(false)
+
+  const getUserName = () => {
+    return user?.nombre || user?.username || 'Usuario'
+  }
+
+  const getUserInitial = () => {
+    const name = getUserName()
+    return name.charAt(0).toUpperCase()
+  }
+
+  const getUserRole = () => {
+    return user?.rol === 'admin' ? 'Administrador' : 'Usuario'
+  }
+
   return (
     <header className="bg-dark-800/50 backdrop-blur-xl border-b border-white/10 text-white shadow-[0_8px_32px_0_rgba(0,128,255,0.1)] sticky top-0 z-50">
       <div className="container mx-auto px-4">
@@ -33,16 +50,51 @@ export default function Header({ onMenuClick }) {
             </div>
           </div>
 
-          <div className="hidden md:flex items-center space-x-4">
-            <div className="text-right">
-              <p className="text-sm font-semibold text-gray-200">Administrador</p>
-              <p className="text-xs text-electric-400 font-medium">Panel de Control</p>
-            </div>
-            <div className="w-12 h-12 bg-dark-700/50 backdrop-blur-sm rounded-xl flex items-center justify-center border-2 border-electric-500/30 hover:border-electric-500 hover:shadow-[0_0_20px_rgba(0,128,255,0.3)] transition-all duration-200 cursor-pointer group">
-              <svg className="w-6 h-6 text-electric-400 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-              </svg>
-            </div>
+          {/* User Menu */}
+          <div className="relative">
+            <button
+              onClick={() => setShowUserMenu(!showUserMenu)}
+              className="flex items-center space-x-3 p-2 rounded-xl hover:bg-electric-500/10 transition-all duration-200 active:scale-95"
+            >
+              <div className="hidden md:block text-right">
+                <p className="text-sm font-semibold text-gray-200">{getUserName()}</p>
+                <p className="text-xs text-electric-400 font-medium">@{user?.username} • {getUserRole()}</p>
+              </div>
+              <div className="w-10 h-10 bg-gradient-to-br from-electric-500 to-neon-600 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(0,128,255,0.4)] font-bold text-white">
+                {getUserInitial()}
+              </div>
+            </button>
+
+            {/* Dropdown Menu */}
+            {showUserMenu && (
+              <>
+                <div
+                  className="fixed inset-0 z-10"
+                  onClick={() => setShowUserMenu(false)}
+                />
+                <div className="absolute right-0 mt-2 w-64 bg-dark-800/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-[0_8px_32px_0_rgba(0,128,255,0.2)] overflow-hidden z-20 animate-scale-in">
+                  <div className="p-4 border-b border-white/10">
+                    <p className="text-sm font-semibold text-gray-200">{getUserName()}</p>
+                    <p className="text-xs text-gray-400 mt-1">@{user?.username}</p>
+                    <p className="text-xs text-electric-400 mt-1">{getUserRole()}</p>
+                  </div>
+                  <div className="p-2">
+                    <button
+                      onClick={() => {
+                        setShowUserMenu(false)
+                        onLogout()
+                      }}
+                      className="w-full flex items-center space-x-3 px-4 py-3 text-left text-gray-300 hover:bg-red-500/10 hover:text-red-400 rounded-lg transition-all duration-200 group"
+                    >
+                      <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      </svg>
+                      <span className="font-medium">Cerrar Sesión</span>
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

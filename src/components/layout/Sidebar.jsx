@@ -4,7 +4,8 @@ export default function Sidebar({ isOpen, currentView, onNavigate, onClose }) {
     { id: 'miembros', label: 'Miembros Generales', icon: 'users', color: 'from-emerald-500 to-teal-500' },
     { id: 'lideres', label: 'Líderes de Ministerio', icon: 'star', color: 'from-amber-500 to-orange-500' },
     { id: 'jovenes', label: 'Grupo de Jóvenes', icon: 'heart', color: 'from-neon-500 to-pink-500' },
-    { id: 'reportes', label: 'Reportes', icon: 'report', color: 'from-purple-500 to-pink-500' },
+    { id: 'hogares', label: 'Hogares de Rumbo', icon: 'home', color: 'from-purple-500 to-pink-500' },
+    { id: 'reportes', label: 'Reportes', icon: 'report', color: 'from-indigo-500 to-purple-500' },
     { id: 'test-supabase', label: '🧪 Test Supabase', icon: 'database', color: 'from-violet-500 to-purple-500' },
   ]
 
@@ -27,6 +28,11 @@ export default function Sidebar({ isOpen, currentView, onNavigate, onClose }) {
     heart: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+      </svg>
+    ),
+    home: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
       </svg>
     ),
     report: (

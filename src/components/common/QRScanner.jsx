@@ -23,7 +23,7 @@ export default function QRScanner({ onScan, onClose, category, tipoEvento = 'Asi
 
     scanner.render(
       async (decodedText) => {
-        if (processing) return // Evitar múltiples escaneos simultáneos
+        if (processing) return 
         
         setProcessing(true)
         try {
