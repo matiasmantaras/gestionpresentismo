@@ -7,6 +7,7 @@ import LideresMinisterio from './components/pages/LideresMinisterio'
 import GrupoJovenes from './components/pages/GrupoJovenes'
 import HogaresRumbo from './components/pages/HogaresRumbo'
 import Reportes from './components/pages/Reportes'
+import DiezmoOfrendas from './components/pages/DiezmoOfrendas'
 import TestSupabase from './components/pages/TestSupabase'
 import Login from './components/auth/Login'
 import { getSession, onAuthStateChange, signOut } from './utils/auth'
@@ -44,7 +45,13 @@ function App() {
     setCurrentView('dashboard')
   }
 
+  const isDiezmoUser = (currentUser) => currentUser?.username === 'diezmo' || currentUser?.rol === 'diezmo'
+
   const renderView = () => {
+    if (currentView === 'diezmo' && !isDiezmoUser(user)) {
+      return <Dashboard onNavigate={setCurrentView} />
+    }
+
     switch (currentView) {
       case 'dashboard':
         return <Dashboard onNavigate={setCurrentView} />
@@ -58,6 +65,8 @@ function App() {
         return <HogaresRumbo user={user} />
       case 'reportes':
         return <Reportes />
+      case 'diezmo':
+        return <DiezmoOfrendas />
       case 'test-supabase':
         return <TestSupabase />
       default:
@@ -97,11 +106,13 @@ function App() {
         <Sidebar 
           isOpen={sidebarOpen}
           currentView={currentView}
+          user={user}
           onNavigate={(view) => {
             setCurrentView(view)
             setSidebarOpen(false)
           }}
           onClose={() => setSidebarOpen(false)}
+          onLogout={handleLogout}
         />
         
         <main className="flex-1 p-4 md:p-6 lg:p-8 ml-0 md:ml-64 transition-all duration-300">

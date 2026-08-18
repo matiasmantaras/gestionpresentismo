@@ -4,30 +4,101 @@ import { supabase } from '../lib/supabase'
 // FUNCIONES DE AUTENTICACIÓN (USUARIO/CONTRASEÑA)
 // ============================================
 
+const RESERVED_DIEZMO_USER = {
+ username: 'diezmo',
+ password: 'diezmo123',
+ nombre: 'Diezmo y Ofrendas',
+ rol: 'diezmo',
+ activo: true,
+}
+
+export const ensureDiezmoUserExists = async () => {
+ try {
+   const { data: existingUser, error: fetchError } = await supabase
+     .from('usuarios')
+     .select('*')
+     .eq('username', RESERVED_DIEZMO_USER.username)
+     .maybeSingle()
+
+   if (fetchError && fetchError.code !== 'PGRST116') {
+     throw fetchError
+   }
+
+   if (!existingUser) {
+     const { error: insertError } = await supabase
+       .from('usuarios')
+       .insert([
+         {
+           ...RESERVED_DIEZMO_USER,
+         },
+       ])
+
+     if (insertError) throw insertError
+
+     return { ...RESERVED_DIEZMO_USER }
+   }
+
+   const shouldUpdate =
+     existingUser.password !== RESERVED_DIEZMO_USER.password ||
+     existingUser.nombre !== RESERVED_DIEZMO_USER.nombre ||
+     existingUser.rol !== RESERVED_DIEZMO_USER.rol ||
+     existingUser.activo !== RESERVED_DIEZMO_USER.activo
+
+   if (shouldUpdate) {
+     const { error: updateError } = await supabase
+       .from('usuarios')
+       .update({
+         password: RESERVED_DIEZMO_USER.password,
+         nombre: RESERVED_DIEZMO_USER.nombre,
+         rol: RESERVED_DIEZMO_USER.rol,
+         activo: true,
+       })
+       .eq('id', existingUser.id)
+
+     if (updateError) throw updateError
+   }
+
+   return {
+     ...existingUser,
+     ...RESERVED_DIEZMO_USER,
+   }
+ } catch (error) {
+   console.error('Error al asegurar el usuario reservado de Diezmo y Ofrendas:', error)
+   return null
+ }
+}
+
 /**
- * Iniciar sesión con usuario y contraseña
- * @param {string} username
- * @param {string} password
- */
+* Iniciar sesión con usuario y contraseña
+* @param {string} username
+* @param {string} password
+*/
 export const signIn = async (username, password) => {
   try {
-    // Buscar usuario en la tabla usuarios
+    const normalizedUsername = String(username || '').trim().toLowerCase()
+    const normalizedPassword = String(password || '').trim()
+
+    await ensureDiezmoUserExists()
+
     const { data, error } = await supabase
       .from('usuarios')
       .select('*')
-      .eq('username', username)
-      .eq('password', password)
+      .eq('username', normalizedUsername)
+      .eq('password', normalizedPassword)
       .eq('activo', true)
-      .single()
-    
-    if (error || !data) {
+      .maybeSingle()
+     
+    if (error && error.code !== 'PGRST116') {
+      throw error
+    }
+
+    if (!data) {
       return {
         success: false,
         error: 'Usuario o contraseña incorrectos',
       }
     }
-    
-    // Guardar sesión en localStorage
+     
     const session = {
       user: {
         id: data.id,
@@ -37,7 +108,7 @@ export const signIn = async (username, password) => {
       },
       timestamp: new Date().toISOString(),
     }
-    
+     
     localStorage.setItem('auth_session', JSON.stringify(session))
     
     return {
@@ -61,7 +132,15 @@ export const signIn = async (username, password) => {
  */
 export const signUp = async (username, password, nombre) => {
   try {
-    // Verificar si el usuario ya existe
+    const normalizedUsername = String(username || '').trim().toLowerCase()
+
+    if (normalizedUsername === 'diezmo') {
+      return {
+        success: false,
+        error: 'Ese nombre de usuario está reservado para el acceso exclusivo de Diezmo y Ofrendas',
+      }
+    }
+
     const { data: existing } = await supabase
       .from('usuarios')
       .select('username')

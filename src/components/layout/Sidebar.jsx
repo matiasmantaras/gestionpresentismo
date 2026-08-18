@@ -1,4 +1,6 @@
-export default function Sidebar({ isOpen, currentView, onNavigate, onClose }) {
+export default function Sidebar({ isOpen, currentView, onNavigate, onClose, onLogout, user }) {
+  const isDiezmoUser = user?.username === 'diezmo' || user?.rol === 'diezmo'
+
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'chart', color: 'from-electric-500 to-cyber-500' },
     { id: 'miembros', label: 'Miembros Generales', icon: 'users', color: 'from-emerald-500 to-teal-500' },
@@ -6,6 +8,7 @@ export default function Sidebar({ isOpen, currentView, onNavigate, onClose }) {
     { id: 'jovenes', label: 'Grupo de Jóvenes', icon: 'heart', color: 'from-neon-500 to-pink-500' },
     { id: 'hogares', label: 'Hogares de Rumbo', icon: 'home', color: 'from-purple-500 to-pink-500' },
     { id: 'reportes', label: 'Reportes', icon: 'report', color: 'from-indigo-500 to-purple-500' },
+    ...(isDiezmoUser ? [{ id: 'diezmo', label: 'Diezmo y Ofrendas', icon: 'coin', color: 'from-amber-500 to-emerald-500' }] : []),
     { id: 'test-supabase', label: '🧪 Test Supabase', icon: 'database', color: 'from-violet-500 to-purple-500' },
   ]
 
@@ -43,6 +46,11 @@ export default function Sidebar({ isOpen, currentView, onNavigate, onClose }) {
     database: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+      </svg>
+    ),
+    coin: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0-6v2m0 16v2m8-10h-2M6 12H4m14.95 7.05l-1.41-1.41M7.46 7.46L6.05 6.05m11.9 0l-1.41 1.41M7.46 16.54l-1.41 1.41" />
       </svg>
     ),
   }
@@ -113,6 +121,23 @@ export default function Sidebar({ isOpen, currentView, onNavigate, onClose }) {
             <p className="text-xs font-semibold text-electric-400 mb-1">Sistema v1.0</p>
             <p className="text-xs text-gray-500">Gestión de Presentismo</p>
           </div>
+
+          {onLogout && (
+            <div className="mt-6 pt-4 border-t border-white/10">
+              <button
+                onClick={() => {
+                  onClose?.()
+                  onLogout()
+                }}
+                className="w-full flex items-center justify-center space-x-3 px-4 py-3 text-red-300 bg-red-500/10 hover:bg-red-500/15 border border-red-500/20 rounded-xl transition-all duration-200 group"
+              >
+                <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span className="font-semibold">Cerrar sesión</span>
+              </button>
+            </div>
+          )}
         </div>
       </aside>
     </>
