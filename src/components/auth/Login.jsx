@@ -225,18 +225,6 @@ export default function Login({ onLoginSuccess }) {
             </button>
           </div>
 
-          {/* Credenciales por defecto (solo para desarrollo / acceso restringido) */}
-          {isLogin && (
-            <div className="mt-6 p-4 bg-electric-500/5 border border-electric-500/20 rounded-xl">
-              <p className="text-xs text-gray-400 text-center mb-2">
-                💡 Usuarios disponibles:
-              </p>
-              <div className="text-xs text-electric-400 text-center font-mono space-y-1">
-                <div><strong>Diezmo:</strong> diezmo / diezmo123</div>
-                <div><strong>Demo:</strong> admin / admin123</div>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Footer */}

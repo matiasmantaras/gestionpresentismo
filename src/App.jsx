@@ -45,9 +45,42 @@ function App() {
     setCurrentView('dashboard')
   }
 
-  const isDiezmoUser = (currentUser) => currentUser?.username === 'diezmo' || currentUser?.rol === 'diezmo'
+  const normalizeRole = (value) => String(value || '')
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z]/g, '')
+
+  const isAdminUser = (currentUser) => {
+    const normalizedUsername = String(currentUser?.username || '').trim().toLowerCase()
+    const normalizedRole = normalizeRole(currentUser?.rol)
+
+    return normalizedUsername === 'admin' || normalizedRole === 'admin' || normalizedRole === 'administracion' || normalizedRole === 'administrador'
+  }
+
+  const isDiezmoUser = (currentUser) => {
+    const normalizedUsername = String(currentUser?.username || '').trim().toLowerCase()
+    const normalizedRole = normalizeRole(currentUser?.rol)
+
+    return normalizedUsername === 'diezmo' || normalizedRole === 'diezmo'
+  }
+
+  const isHomeRestrictedUser = (currentUser) => !isAdminUser(currentUser) && !isDiezmoUser(currentUser)
 
   const renderView = () => {
+    if (isAdminUser(user) && currentView === 'diezmo') {
+      return <Dashboard onNavigate={setCurrentView} />
+    }
+
+    if (isDiezmoUser(user) && currentView !== 'diezmo') {
+      return <DiezmoOfrendas />
+    }
+
+    if (isHomeRestrictedUser(user) && currentView !== 'hogares') {
+      return <HogaresRumbo user={user} />
+    }
+
     if (currentView === 'diezmo' && !isDiezmoUser(user)) {
       return <Dashboard onNavigate={setCurrentView} />
     }
@@ -56,19 +89,19 @@ function App() {
       case 'dashboard':
         return <Dashboard onNavigate={setCurrentView} />
       case 'miembros':
-        return <MiembrosGenerales />
+        return isAdminUser(user) ? <MiembrosGenerales /> : <HogaresRumbo user={user} />
       case 'lideres':
-        return <LideresMinisterio />
+        return isAdminUser(user) ? <LideresMinisterio /> : <HogaresRumbo user={user} />
       case 'jovenes':
-        return <GrupoJovenes />
+        return isAdminUser(user) ? <GrupoJovenes /> : <HogaresRumbo user={user} />
       case 'hogares':
         return <HogaresRumbo user={user} />
       case 'reportes':
-        return <Reportes />
+        return isAdminUser(user) ? <Reportes /> : <HogaresRumbo user={user} />
       case 'diezmo':
-        return <DiezmoOfrendas />
+        return isDiezmoUser(user) ? <DiezmoOfrendas /> : <Dashboard onNavigate={setCurrentView} />
       case 'test-supabase':
-        return <TestSupabase />
+        return isAdminUser(user) ? <TestSupabase /> : <HogaresRumbo user={user} />
       default:
         return <Dashboard onNavigate={setCurrentView} />
     }

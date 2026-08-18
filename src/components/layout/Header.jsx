@@ -12,8 +12,26 @@ export default function Header({ onMenuClick, user, onLogout }) {
     return name.charAt(0).toUpperCase()
   }
 
+  const normalizeRole = (value) => String(value || '')
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z]/g, '')
+
   const getUserRole = () => {
-    return user?.rol === 'admin' ? 'Administrador' : 'Usuario'
+    const role = normalizeRole(user?.rol)
+    const username = String(user?.username || '').trim().toLowerCase()
+
+    if (username === 'admin' || role === 'admin' || role === 'administracion' || role === 'administrador') {
+      return 'Administrador'
+    }
+
+    if (username === 'diezmo' || role === 'diezmo') {
+      return 'Diezmo y Ofrendas'
+    }
+
+    return 'Usuario'
   }
 
   return (

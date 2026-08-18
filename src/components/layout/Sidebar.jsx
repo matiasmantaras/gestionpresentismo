@@ -1,16 +1,46 @@
 export default function Sidebar({ isOpen, currentView, onNavigate, onClose, onLogout, user }) {
-  const isDiezmoUser = user?.username === 'diezmo' || user?.rol === 'diezmo'
+  const normalizeRole = (value) => String(value || '')
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z]/g, '')
 
-  const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: 'chart', color: 'from-electric-500 to-cyber-500' },
-    { id: 'miembros', label: 'Miembros Generales', icon: 'users', color: 'from-emerald-500 to-teal-500' },
-    { id: 'lideres', label: 'Líderes de Ministerio', icon: 'star', color: 'from-amber-500 to-orange-500' },
-    { id: 'jovenes', label: 'Grupo de Jóvenes', icon: 'heart', color: 'from-neon-500 to-pink-500' },
-    { id: 'hogares', label: 'Hogares de Rumbo', icon: 'home', color: 'from-purple-500 to-pink-500' },
-    { id: 'reportes', label: 'Reportes', icon: 'report', color: 'from-indigo-500 to-purple-500' },
-    ...(isDiezmoUser ? [{ id: 'diezmo', label: 'Diezmo y Ofrendas', icon: 'coin', color: 'from-amber-500 to-emerald-500' }] : []),
-    { id: 'test-supabase', label: '🧪 Test Supabase', icon: 'database', color: 'from-violet-500 to-purple-500' },
-  ]
+  const isAdminUser = (currentUser) => {
+    const username = String(currentUser?.username || '').trim().toLowerCase()
+    const role = normalizeRole(currentUser?.rol)
+    return username === 'admin' || role === 'admin' || role === 'administracion' || role === 'administrador'
+  }
+
+  const isDiezmoUser = (currentUser) => {
+    const username = String(currentUser?.username || '').trim().toLowerCase()
+    const role = normalizeRole(currentUser?.rol)
+    return username === 'diezmo' || role === 'diezmo'
+  }
+
+  const menuItems = (() => {
+    if (isAdminUser(user)) {
+      return [
+        { id: 'dashboard', label: 'Dashboard', icon: 'chart', color: 'from-electric-500 to-cyber-500' },
+        { id: 'miembros', label: 'Miembros Generales', icon: 'users', color: 'from-emerald-500 to-teal-500' },
+        { id: 'lideres', label: 'Líderes de Ministerio', icon: 'star', color: 'from-amber-500 to-orange-500' },
+        { id: 'jovenes', label: 'Grupo de Jóvenes', icon: 'heart', color: 'from-neon-500 to-pink-500' },
+        { id: 'hogares', label: 'Hogares de Rumbo', icon: 'home', color: 'from-purple-500 to-pink-500' },
+        { id: 'reportes', label: 'Reportes', icon: 'report', color: 'from-indigo-500 to-purple-500' },
+        { id: 'test-supabase', label: '🧪 Test Supabase', icon: 'database', color: 'from-violet-500 to-purple-500' },
+      ]
+    }
+
+    if (isDiezmoUser(user)) {
+      return [
+        { id: 'diezmo', label: 'Diezmo y Ofrendas', icon: 'coin', color: 'from-amber-500 to-emerald-500' },
+      ]
+    }
+
+    return [
+      { id: 'hogares', label: 'Hogares de Rumbo', icon: 'home', color: 'from-purple-500 to-pink-500' },
+    ]
+  })()
 
   const icons = {
     chart: (
